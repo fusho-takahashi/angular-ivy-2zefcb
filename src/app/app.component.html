@@ -1,3 +1,5 @@
-<p>counter: 0</p>
-<button>+</button>
-<button>-</button>
+<section *ngIf="state$ | async as state">
+  <p>counter: {{ state.count }}</p>
+  <button (click)="increment()">+</button>
+  <button (click)="decrement()">-</button>
+</section>

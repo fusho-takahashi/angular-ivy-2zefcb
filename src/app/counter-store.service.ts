@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 interface State {
   count: number;
@@ -9,8 +10,25 @@ interface State {
 export class CounterStoreService {
   readonly _counterState$ = new BehaviorSubject<State>({ count: 0 });
 
+  /**
+   * 全部返すとき
+   */
   get state$(): Observable<State> {
     return this._counterState$.asObservable();
+  }
+
+  /**
+   * 特定のプロパティだけほしいとき
+   */
+  get count$(): Observable<number> {
+    return this._counterState$.asObservable().pipe(map((state) => state.count));
+  }
+
+  /**
+   * 同期的に値がほしいとき
+   */
+  get countValu(): number {
+    return this._counterState$.getValue().count;
   }
 
   incrementCount(): void {

@@ -7,7 +7,7 @@ import { CounterStoreService } from './counter-store.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  state$ = this.store.getState$();
+  state$ = this.store.state$;
 
   constructor(private store: CounterStoreService) {}
 

@@ -9,7 +9,7 @@ interface State {
 export class CounterStoreService {
   readonly _counterState$ = new BehaviorSubject<State>({ count: 0 });
 
-  getState$(): Observable<State> {
+  get state$(): Observable<State> {
     return this._counterState$.asObservable();
   }
 

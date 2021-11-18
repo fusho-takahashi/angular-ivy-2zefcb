@@ -10,6 +10,10 @@ interface State {
 export class CounterStoreService {
   readonly _counterState$ = new BehaviorSubject<State>({ count: 0 });
 
+  select<T>(selector: (state: State) => T) {
+    return this._counterState$.pipe(map(selector), distinctUntilChanged());
+  }
+
   /**
    * 全部返すとき
    */
@@ -31,28 +35,21 @@ export class CounterStoreService {
     return this._counterState$.value.count;
   }
 
-  select<T>(selector: (state: State) => T) {
-    return this._counterState$.pipe(map(selector), distinctUntilChanged());
+  update(fn: (state: State) => State) {
+    const currentValue = this._counterState$.value;
+    queueScheduler.schedule(() => {
+      this._counterState$.next(fn(currentValue));
+    });
   }
 
   incrementCount(): void {
-    const currentValue = this._counterState$.value;
-    queueScheduler.schedule(() => {
-      this._counterState$.next({
-        ...currentValue,
-        count: currentValue.count + 1,
-      });
-    });
+    this.update((state) => ({ ...state, count: state.count + 1 }));
   }
 
   decrementCount(): void {
-    const currentValue = this._counterState$.value;
-    if (currentValue.count < 1) return;
-    queueScheduler.schedule(() => {
-      this._counterState$.next({
-        ...currentValue,
-        count: currentValue.count - 1,
-      });
-    });
+    this.update((state) => ({
+      ...state,
+      count: state.count < 1 ? state.count : state.count - 1,
+    }));
   }
 }
